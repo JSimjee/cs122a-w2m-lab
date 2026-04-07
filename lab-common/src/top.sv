@@ -23,12 +23,22 @@ Create a wire, assign that wire with your desired boolean logic, and assign that
 //                                      , and res[4] in 'adder' maps to seg7[7] in 'top')
 
 
-input wire result[4:0];
-output logic new_seg7[7:0];
-always_comb begin
-    // Instantiate adder
-    adder(val1, val2, result);
-    decoder(result[3:0], new_seg7);
-end
+input wire[4:0] result;
+output logic[4:0] adder_output;
+output logic[7:0] new_seg7;
+
+// Instantiate so it exists in hardware
+// We're building hardware
+// We're assigning wires to outputs and inputs
+// We're not creating a set of sequential instructions to run in sequence
+// We're describing physical hardware, with wires and gates and abstractions called modules
+adder my_adder(val1, val2, adder_output);
+decoder my_decoder(adder_output[3:0], new_seg7[6:0]);
+
+// assign [output] = [input]
+assign new_seg7[7] = result[4];
+assign decoder_input = adder_output;
 
 endmodule
+
+// Jameel: Note: I used this forum post for help with learning verilog syntax, https://stackoverflow.com/questions/67513625/what-is-best-way-to-call-another-module

@@ -1,41 +1,96 @@
+`timescale 1ns / 1ps
+// I guess this isn't necessary?
+
 `include "src/top.sv"
-`timescale 1ns/1ps         // Set tick to 1ns. Set sim resolution to 1ps.
+`default_nettype none
 
-/**
- * Note:
- *  The TB below is only an example of a testbench written in SV.
- *  Adapt this for your lab assignments as you see fit.
- *  An example clk signal has been added to show what a signal decl and usage looks like.
- *     You are welcome to delete the clk signal if it's not needed.
- *     For instance, purely combinational circuits do not need clks.
- *     So for labs without sequential elements, you can remove them.
- */
+module top_tb; // No port list required because we're not synthesizing a testbench to actual hardware
 
-module top_tb;
+// Registers as input
+logic[3:0] NUM1;
+logic[3:0] NUM2;
+// Wires as output (SEG7
+wire[7:0] SEG7;
+top UUT (NUM1, NUM2, SEG7);
 
-/** declare tb signals below */
-logic clk_tb;
+// Keep track of if all tests pass
+// boolean passed_all_tests;
+integer tests_passed;
 
-/** declare module(s) below */
-top dut                    // declare an inst of top called "dut" (device under test)
-(
-    /** hook up tb signals to dut signals */
-    .clk(clk_tb)           // connect dut's clk wire to clk_tb
-);
-
-localparam CLK_PERIOD = /** clk period */;
-always #(CLK_PERIOD/2) clk_tb=~clk_tb;          // toggle clk_tb every #(CLK_PERIOD/2) ticks
+localparam CLK_PERIOD = 1;
+// always #(CLK_PERIOD/2) clk=~clk;
 
 initial begin
-    $dumpfile("build/top.vcd"); // intermediate file for waveform generation
-    $dumpvars(0, top_tb);       // capture all signals under top_tb
+    $dumpfile("build/top.vcd"); // Output to vcd file for GTKWave
+    $dumpvars(0, top_tb); // Meant to be opened in vvp to run testbench after compiling with iverilog
+
+    // Initialize variable
+    NUM1 = 4'b0000;
+    NUM2 = 4'b0000;
+    tests_passed = 0;
+
+
+    test00(); #(CLK_PERIOD*3);
+    test01(); #(CLK_PERIOD*3);
+    test02(); #(CLK_PERIOD*3);
+    test03(); #(CLK_PERIOD*3);
+    
+    $display("Passed: ");
+    $display(tests_passed);
+
+    $finish;
 end
 
+// 1D7S is GFEDCBAdp
+// Test cases
+task test00();
+    begin
+        NUM1 = 4'd0;
+        NUM2 = 4'd0;
+        #5; // Wait for 5 time units
+        tests_passed += (SEG7 == 8'b11111100);
+    end
+endtask
+
+task test01();
+    begin
+        NUM1 = 4'd15;
+        NUM2 = 4'd15;
+        #5; // Wait for 5 time units
+        tests_passed += (SEG7 == 8'b11110011);
+    end
+endtask
+
+task test02();
+    begin
+        NUM1 = 4'd15;
+        NUM2 = 4'd0;
+        #5; // Wait for 5 time units
+        tests_passed += (SEG7 == 8'b11111110);
+    end
+endtask
+
+task test03();
+    begin
+        NUM1 = 4'd13;
+        NUM2 = 4'd7;
+        #5; // Wait for 5 time units
+        tests_passed += (SEG7 == 8'b11001101);
+    end
+endtask
+
+
 initial begin
-    /** testbench logic goes below */
-    clk_tb<=1'b1;       // sets clk_tb to 1
-    #(CLK_PERIOD*3);    // waits for CLK_PERIOD * 3 ticks
-    $finish;            // end simulation, otherwise it runs indefinitely
+    // // clk<=1'b1;
+    // // #(CLK_PERIOD*3);
+    // // testbench logic goes below
+    // test00(); #(CLK_PERIOD*3);
+    
+    // $display("Passed: ");
+    // $display(tests_passed);
+
+    // $finish;
 end
 
 endmodule
+// `default_nettype wire
