@@ -32,8 +32,9 @@ initial begin
     $dumpvars(0, top_tb); // Meant to be opened in vvp to run testbench after compiling with iverilog
 end
 
-// 1D7S is ABCDEFGdp
+// 1D7S is dpABCDEFG
 // Test cases
+// Subtract by 15, not 16, when overflow happens
 task test00();
     begin
         NUM1 = 4'd0;
@@ -48,7 +49,7 @@ task test01();
         NUM1 = 4'd15;
         NUM2 = 4'd15;
         #5; // Wait for 5 time units
-        tests_passed += (SEG7 == 8'b11110011);
+        tests_passed += (SEG7 == 8'b11001111);
     end
 endtask
 
@@ -57,16 +58,34 @@ task test02();
         NUM1 = 4'd15;
         NUM2 = 4'd0;
         #5; // Wait for 5 time units
-        tests_passed += (SEG7 == 8'b11100010);
+        tests_passed += (SEG7 == 8'b01000111);
     end
 endtask
 
 task test03();
     begin
-        NUM1 = 4'd13;
-        NUM2 = 4'd7;
+        NUM1 = 4'd13; // D
+        NUM2 = 4'd7;  // 7
         #5; // Wait for 5 time units
-        tests_passed += (SEG7 == 8'b11001101);
+        tests_passed += (SEG7 == 8'b10110011);
+    end
+endtask
+
+task test04();
+    begin
+        NUM1 = 4'd5; // D
+        NUM2 = 4'd6;  // 7
+        #5; // Wait for 5 time units
+        tests_passed += (SEG7 == 8'b00011111);
+    end
+endtask
+
+task test05();
+    begin
+        NUM1 = 4'd11; // D
+        NUM2 = 4'd11;  // 7
+        #5; // Wait for 5 time units
+        tests_passed += (SEG7 == 8'b11011111);
     end
 endtask
 
@@ -86,6 +105,8 @@ initial begin
     test01(); #(CLK_PERIOD*3);
     test02(); #(CLK_PERIOD*3);
     test03(); #(CLK_PERIOD*3);
+    test04(); #(CLK_PERIOD*3);
+    test05(); #(CLK_PERIOD*3);
     
     $display("Passed: ", tests_passed);
 

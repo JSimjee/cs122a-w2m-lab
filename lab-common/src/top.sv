@@ -23,8 +23,8 @@ Create a wire, assign that wire with your desired boolean logic, and assign that
 //                                      , and res[4] in 'adder' maps to seg7[7] in 'top')
 
 
-wire[4:0] result;
-logic[4:0] adder_output;
+// Neither input nor output, because they're both input and output wires
+wire[4:0] adder_output;
 
 // Instantiate so it exists in hardware
 // We're building hardware
@@ -34,9 +34,7 @@ logic[4:0] adder_output;
 adder my_adder(val1, val2, adder_output);
 decoder my_decoder(adder_output[3:0], seg7[6:0]);
 
-// assign [output] = [input]
 assign seg7[7] = adder_output[4];
-assign decoder_input = adder_output;
 
 endmodule
 
