@@ -8,11 +8,11 @@ set_io val2[2] 31
 set_io val2[1] 27
 set_io val2[0] 25
 
-set_io seg7[7] 45
-set_io seg7[6] 43
-set_io seg7[5] 38
-set_io seg7[4] 36
-set_io seg7[3] 46
-set_io seg7[2] 44
-set_io seg7[1] 42
-set_io seg7[0] 37
+set_io seg7[7] 45 
+set_io seg7[6] 43 
+set_io seg7[5] 38 
+set_io seg7[4] 36 
+set_io seg7[3] 46  
+set_io seg7[2] 44 
+set_io seg7[1] 42 
+set_io seg7[0] 37 
